@@ -10,10 +10,54 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_01_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
+
+  create_table "agent_runs", force: :cascade do |t|
+    t.text "prompt", null: false
+    t.string "model", null: false
+    t.string "mode", null: false
+    t.string "status", default: "queued", null: false
+    t.string "replay_slug"
+    t.string "recorded"
+    t.integer "iterations", default: 0, null: false
+    t.string "stop_reason"
+    t.integer "input_tokens", default: 0, null: false
+    t.integer "output_tokens", default: 0, null: false
+    t.integer "cache_read_input_tokens", default: 0, null: false
+    t.integer "cache_creation_input_tokens", default: 0, null: false
+    t.string "error_code"
+    t.text "error_message"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.integer "duration_ms"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_agent_runs_on_created_at"
+    t.index ["status"], name: "index_agent_runs_on_status"
+    t.check_constraint "mode::text = ANY (ARRAY['live'::character varying, 'replay'::character varying]::text[])", name: "agent_runs_mode_check"
+  end
+
+  create_table "agent_steps", force: :cascade do |t|
+    t.bigint "agent_run_id", null: false
+    t.integer "position", null: false
+    t.string "kind", null: false
+    t.integer "iteration", default: 0, null: false
+    t.text "content"
+    t.string "tool_use_id"
+    t.string "tool_name"
+    t.jsonb "input"
+    t.jsonb "output"
+    t.boolean "is_error", default: false, null: false
+    t.integer "elapsed_ms"
+    t.integer "duration_ms"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_run_id", "position"], name: "index_agent_steps_on_agent_run_id_and_position", unique: true
+    t.check_constraint "kind::text = ANY (ARRAY['text'::character varying, 'progress'::character varying, 'tool_use'::character varying, 'tool_result'::character varying, 'error'::character varying]::text[])", name: "agent_steps_kind_check"
+  end
 
   create_table "assets", force: :cascade do |t|
     t.string "tag", null: false
@@ -104,6 +148,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_000001) do
     t.index ["owner_id"], name: "index_services_on_owner_id"
   end
 
+  add_foreign_key "agent_steps", "agent_runs", on_delete: :cascade
   add_foreign_key "assets", "locations"
   add_foreign_key "assets", "people", column: "custodian_id"
   add_foreign_key "checkouts", "assets"
