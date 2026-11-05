@@ -22,6 +22,11 @@ gem "bootsnap", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 
+# Claude API (official Anthropic Ruby SDK) for the agent loop
+gem "anthropic", "~> 2.5"
+# Validates tool inputs against the same JSON schemas sent to the model
+gem "json_schemer", "~> 2.5"
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
 
@@ -40,4 +45,8 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+end
+
+group :test do
+  gem "webmock"
 end
