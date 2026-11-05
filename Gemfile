@@ -29,8 +29,8 @@ gem "json_schemer", "~> 2.5"
 # Official MCP Ruby SDK: exposes the same tools to Claude Code / Claude Desktop
 gem "mcp", "~> 1.9"
 
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+# CORS for the React frontend when it is served from another origin (CORS_ORIGINS)
+gem "rack-cors", "~> 3.0"
 
 group :development, :test do
   gem "rspec-rails"

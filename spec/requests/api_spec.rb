@@ -105,6 +105,9 @@ RSpec.describe "API", type: :request do
       expect(json["services"].map { |s| [s["id"], s["depth"]] }).to eq([[svc_a.id, 1], [svc_b.id, 2]])
       expect(json["people"].map { |p| p["id"] }).to eq([owner.id])
       expect(json["counts"]).to eq("services" => 2, "assets" => 0, "people" => 1)
+      edges = json["edges"].map { |e| [e["source"]["id"], e["target"]["type"], e["target"]["id"], e["kind"]] }
+      expect(edges).to contain_exactly([svc_a.id, "Asset", srv.id, "runs_on"], [svc_b.id, "Service", svc_a.id, "depends_on"],
+                                       [svc_a.id, "Service", svc_b.id, "depends_on"])
     end
 
     it "honours max_depth" do

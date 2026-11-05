@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-line: #e3e6eb;
+  --color-line-strong: #cfd4dc;
+  --color-ink: #0e1726;
+  --color-ink-2: #3b4555;
+  --color-muted: #5d6778;
+  --color-faint: #8a93a3;
+
+  --color-brand: #3949d6;
+  --color-brand-ink: #2a37b0;
+  --color-brand-soft: #eef0fd;
+
+  --color-ok: #0f8a5f;
+  --color-ok-soft: #e8f6f0;
+  --color-bad: #c8323f;
+  --color-bad-soft: #fdeef0;
+  --color-warn: #a65f00;
+  --color-warn-soft: #fff6e6;
+
+  --color-crit-critical: #c8323f;
+  --color-crit-high: #d9631e;
+  --color-crit-medium: #c99400;
+  --color-crit-low: #7a8496;
+
+  --color-node-service: #3949d6;
+  --color-node-asset: #0e7490;
+  --color-node-person: #a65f00;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-canvas text-ink font-sans antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Answer prose (rendered markdown) */
+.prose-answer {
+  @apply text-[14.5px] leading-[1.65] text-ink;
+}
+.prose-answer p {
+  @apply my-2;
+}
+.prose-answer p:first-child {
+  @apply mt-0;
+}
+.prose-answer strong {
+  @apply font-semibold text-ink;
+}
+.prose-answer ul,
+.prose-answer ol {
+  @apply my-2 pl-5;
+}
+.prose-answer ul {
+  @apply list-disc;
+}
+.prose-answer ol {
+  @apply list-decimal;
+}
+.prose-answer li {
+  @apply my-0.5 marker:text-faint;
+}
+.prose-answer code {
+  @apply rounded bg-canvas px-1 py-0.5 font-mono text-[12.5px];
+}
+.prose-answer table {
+  @apply my-3 block w-full overflow-x-auto border-collapse text-[13px];
+}
+.prose-answer th {
+  @apply border-b border-line-strong px-2.5 py-1.5 text-left font-semibold whitespace-nowrap text-ink-2;
+}
+.prose-answer td {
+  @apply border-b border-line px-2.5 py-1.5 align-top;
+}
+.prose-answer a {
+  @apply text-brand underline underline-offset-2;
+}
+
+.streaming-caret > :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--color-brand);
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes node-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.node-in {
+  animation: node-in 260ms ease-out both;
+}
+
+/* react-flow chrome, restyled to match */
+.react-flow__controls {
+  @apply overflow-hidden rounded-lg border border-line shadow-sm;
+}
+.react-flow__controls-button {
+  @apply border-line;
+}
+.react-flow__attribution {
+  @apply bg-transparent! text-[10px] text-faint;
+}
+.react-flow__edge-path {
+  transition: stroke 150ms, opacity 150ms;
+}
+
+dialog::backdrop {
+  background: rgb(14 23 38 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node-in,
+  .streaming-caret > :last-child::after {
+    animation: none;
+  }
+}
