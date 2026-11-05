@@ -225,7 +225,7 @@ the agent's work, and a live dependency graph of what its tools touch.
   failing node, the impacted services and assets by hop distance, and an overflow node for whatever is
   beyond the tool's 25-item lists. Edges come from `GET /api/impact/:type/:id`, which returns the subgraph
   with its `edges`; only shortest-path edges are drawn (the rest are counted in the legend), which keeps
-  ~60 nodes readable. People to notify are listed beside the graph, and can be drawn as nodes. Assets
+  ~60 nodes readable. People to notify are listed in a collapsible column beside the graph (a drawer below it on narrow screens), never over it; the canvas re-fits when the column opens. They can also be drawn as nodes. Assets
   touched by the other tools (search, check-out/in, maintenance) are highlighted, anchored on a node per
   tool call; a failed call is marked red. Hovering a tool card highlights the nodes it produced.
 - **BYOK.** The settings dialog keeps the key in `sessionStorage` (this tab only) and sends it as
@@ -250,8 +250,8 @@ page URL to replay faster.
 ```sh
 npm test               # Vitest: SSE parser, run reducer, graph model and layout (over db/replays/*.json)
 npm run lint && npm run typecheck && npm run build
-npm run screenshots    # headless Chromium against a running app: replays 4 prompts, checks BYOK headers
-                       # with a mocked API, fails on console errors; writes docs/screenshots/
+npm run screenshots    # headless Chromium against a running app: replays 4 prompts, checks BYOK headers,
+                       # fails on console errors or a graph node hidden under an overlay; writes docs/screenshots/
 ```
 
 `npm run screenshots` uses `playwright-core`; point `CHROMIUM_PATH` at a Chromium binary if Playwright's

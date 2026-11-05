@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import {
   Background,
   Controls,
@@ -95,26 +95,29 @@ function GraphPanelInner({ run, focusedTool, onTryPrompt, canTry }: Props) {
         )}
       </div>
 
-      <div className="relative min-h-0 flex-1">
-        {model ? (
-          <FlowCanvas model={model} focusedTool={focusedTool} />
-        ) : loadingEdges ? (
-          <div className="grid h-full place-items-center text-sm text-muted">
-            <span className="inline-flex items-center gap-2">
-              <Spinner className="size-4 text-brand" /> Resolving dependency edges…
-            </span>
-          </div>
-        ) : (
-          <EmptyGraph run={run} onTryPrompt={onTryPrompt} canTry={canTry} />
-        )}
-        {model && <Legend model={model} />}
+      {/* The canvas and the people column sit side by side (stacked below lg), so the list never covers nodes. */}
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        <div className="relative min-h-[360px] min-w-0 flex-1 lg:min-h-0">
+          {model ? (
+            <FlowCanvas model={model} focusedTool={focusedTool} />
+          ) : loadingEdges ? (
+            <div className="grid h-full place-items-center text-sm text-muted">
+              <span className="inline-flex items-center gap-2">
+                <Spinner className="size-4 text-brand" /> Resolving dependency edges…
+              </span>
+            </div>
+          ) : (
+            <EmptyGraph run={run} onTryPrompt={onTryPrompt} canTry={canTry} />
+          )}
+          {model?.source === "impact" && !model.edgesKnown && (
+            <p className="absolute top-3 left-1/2 -translate-x-1/2 rounded-md border border-warn/25 bg-warn-soft px-2 py-1 text-[11.5px] text-warn">
+              Dependency edges unavailable: nodes are laid out by hop distance.
+            </p>
+          )}
+        </div>
         {model && model.people.length > 0 && <PeopleList model={model} />}
-        {model?.source === "impact" && !model.edgesKnown && (
-          <p className="absolute top-3 left-1/2 -translate-x-1/2 rounded-md border border-warn/25 bg-warn-soft px-2 py-1 text-[11.5px] text-warn">
-            Dependency edges unavailable: nodes are laid out by hop distance.
-          </p>
-        )}
       </div>
+      {model && <Legend model={model} />}
     </section>
   );
 }
@@ -158,26 +161,40 @@ function EmptyGraph({ run, onTryPrompt, canTry }: { run: Run | undefined; onTryP
   );
 }
 
+// A collapsible column to the right of the canvas at desktop widths, a drawer under it on narrow screens.
+// The canvas re-fits when it changes size (FlowCanvas), so opening it never hides a node.
 function PeopleList({ model }: { model: GraphModel }) {
   const [open, setOpen] = useState(false);
   const total = model.counts?.people ?? model.people.length;
+  const count = model.people.length < total ? `${model.people.length} of ${total}` : String(total);
   return (
-    <div className="absolute top-3 left-3 w-[250px] overflow-hidden rounded-lg border border-line bg-surface/95 shadow-sm backdrop-blur">
+    <aside
+      aria-label="People to notify"
+      data-panel="people"
+      className={`flex shrink-0 flex-col border-t border-line bg-surface lg:border-t-0 lg:border-l ${
+        open ? "max-h-[240px] lg:max-h-none lg:w-[260px]" : "lg:w-11"
+      }`}
+    >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-semibold text-ink"
+        aria-controls="people-to-notify-list"
+        title={open ? "Collapse people to notify" : "Show people to notify"}
+        className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] font-semibold text-ink hover:bg-canvas ${
+          open ? "" : "lg:h-full lg:flex-col lg:justify-start lg:px-0 lg:py-3"
+        }`}
       >
-        <span className="size-2 rounded-full bg-node-person" aria-hidden />
-        People to notify
-        <span className="font-normal text-muted">
-          {model.people.length < total ? `${model.people.length} of ${total}` : total}
+        <span className="size-2 shrink-0 rounded-full bg-node-person" aria-hidden />
+        <span className={open ? "" : "lg:[writing-mode:vertical-rl]"}>
+          People to notify <span className="font-normal text-muted">{count}</span>
         </span>
-        <span className="ml-auto text-[11px] font-medium text-brand">{open ? "Hide" : "Show"}</span>
+        <span className={`ml-auto text-[11px] font-medium text-brand ${open ? "" : "lg:ml-0 lg:[writing-mode:vertical-rl]"}`}>
+          {open ? "Hide" : "Show"}
+        </span>
       </button>
       {open && (
-        <ul className="max-h-[320px] overflow-y-auto border-t border-line px-3 py-1.5 text-[12px]">
+        <ul id="people-to-notify-list" className="min-h-0 flex-1 overflow-y-auto border-t border-line px-3 py-1.5 text-[12px]">
           {model.people.map((p) => (
             <li key={p.name} className="py-1">
               <span className="font-medium text-ink">{p.name}</span> <span className="text-muted">· {p.department}</span>
@@ -186,14 +203,14 @@ function PeopleList({ model }: { model: GraphModel }) {
           ))}
         </ul>
       )}
-    </div>
+    </aside>
   );
 }
 
 function Legend({ model }: { model: GraphModel }) {
   const touched = model.nodes.some((n) => n.touchedBy.length > 0);
   return (
-    <div className="pointer-events-none absolute right-3 bottom-3 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 rounded-lg border border-line bg-surface/90 px-2.5 py-1.5 text-[11px] text-ink-2 shadow-sm backdrop-blur">
+    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 border-t border-line bg-surface px-3 py-1.5 text-[11px] text-ink-2">
       {model.source === "impact" && (
         <span className="inline-flex items-center gap-1.5">
           <span className="size-2.5 rounded-sm bg-bad" /> failing
@@ -228,6 +245,7 @@ const nodeTypes = { entity: memo(EntityNode) };
 function FlowCanvas({ model, focusedTool }: { model: GraphModel; focusedTool: string | null }) {
   const positions = useMemo(() => layoutGraph(model), [model]);
   const { fitView } = useReactFlow();
+  const wrapper = useRef<HTMLDivElement>(null);
 
   const nodes: FlowNode[] = useMemo(
     () =>
@@ -257,24 +275,42 @@ function FlowCanvas({ model, focusedTool }: { model: GraphModel; focusedTool: st
     return () => cancelAnimationFrame(id);
   }, [model, fitView]);
 
+  // ...and when the canvas changes size (the people column opening or closing, a window resize).
+  useEffect(() => {
+    const el = wrapper.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    let frame = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => fitView({ padding: 0.12, duration: 200, maxZoom: 1.1 }));
+    });
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [fitView]);
+
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      fitView
-      fitViewOptions={{ padding: 0.12, maxZoom: 1.1 }}
-      minZoom={0.2}
-      maxZoom={2}
-      nodesDraggable={false}
-      nodesConnectable={false}
-      elementsSelectable={false}
-      proOptions={{ hideAttribution: false }}
-      aria-label="Dependency graph canvas"
-    >
-      <Background gap={20} size={1} color="#dde1e7" />
-      <Controls showInteractive={false} position="top-right" />
-    </ReactFlow>
+    <div ref={wrapper} className="absolute inset-0">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        fitView
+        fitViewOptions={{ padding: 0.12, maxZoom: 1.1 }}
+        minZoom={0.2}
+        maxZoom={2}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={false}
+        proOptions={{ hideAttribution: false }}
+        aria-label="Dependency graph canvas"
+      >
+        <Background gap={20} size={1} color="#dde1e7" />
+        <Controls showInteractive={false} position="top-right" />
+      </ReactFlow>
+    </div>
   );
 }
 
