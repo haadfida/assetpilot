@@ -10,7 +10,7 @@ class AgentStep < ApplicationRecord
 
   def as_event
     case kind
-    when "text", "progress" then { step: position, text: content }
+    when "text", "progress" then { step: position, delta: content }
     when "tool_use" then { step: position, id: tool_use_id, name: tool_name, input: input }
     when "tool_result" then { step: position, tool_use_id:, name: tool_name, is_error:, output:, duration_ms: }
     when "error" then { step: position, code: output&.dig("code"), message: content }
