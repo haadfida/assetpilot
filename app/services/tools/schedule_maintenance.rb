@@ -25,6 +25,7 @@ module Tools
          }
 
     def self.mutating? = true
+    def self.destructive? = false # only adds tasks, never overwrites
 
     private
 

@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
+  mount AssetpilotMcp::HttpApp.new => "/mcp"
+
   namespace :api do
     resources :assets, only: %i[index show]
     resources :people, only: %i[index show]

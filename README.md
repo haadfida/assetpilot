@@ -205,6 +205,64 @@ bin/rails replays:verify   # re-runs every recorded tool call and checks the fix
 Scenarios live in `lib/replays/scenarios.rb`. If you change the seeds, a tool's output, or a template,
 rebuild the fixtures; the spec suite fails on stale ones.
 
+## Use from Claude Code / Claude Desktop
+
+AssetPilot ships an [MCP](https://modelcontextprotocol.io) server (official `mcp` Ruby SDK) that exposes the
+same seven tools as the agent. It wraps `Tools::Registry` (`app/mcp/assetpilot_mcp.rb`), so names,
+descriptions, JSON schemas and the mutating flag cannot drift from the agent's. Read tools are annotated
+`readOnlyHint: true`; `checkout_asset` and `checkin_asset` are `destructiveHint: true`, `schedule_maintenance`
+is a non-read-only, non-destructive write. It also serves a resource, `inventory://summary`.
+Failed tool calls come back as `isError` results carrying the same `{ok:false, error:{code,message,details}}`
+JSON the agent sees. Nothing here installs or edits any client config; copy what you need.
+
+Prerequisites: the database is up and seeded (`docker-compose up -d db`, `bin/rails db:setup`), and `ruby`
+on the client's PATH is the project's Ruby (3.2.3) with `bundle install` done. For GUI clients that do not
+inherit your shell PATH, point at a wrapper script that selects Ruby first.
+
+### stdio (Claude Code)
+
+```sh
+claude mcp add assetpilot -- /ABS/PATH/TO/assetpilot/bin/mcp
+```
+
+`bin/mcp` boots Rails, writes only JSON-RPC to stdout and everything else (logs, warnings) to stderr.
+It uses `RAILS_ENV=development` unless you set it. Set `MCP_ALLOW_WRITES=0` for a read-only stdio server:
+
+```sh
+claude mcp add assetpilot-ro -e MCP_ALLOW_WRITES=0 -- /ABS/PATH/TO/assetpilot/bin/mcp
+```
+
+### Streamable HTTP
+
+Rails mounts the server at `/mcp` (stateless, JSON responses). Over HTTP it is **read-only** (the three
+mutating tools are not even listed) unless `MCP_ALLOW_WRITES=1`. Set `MCP_TOKEN` to require
+`Authorization: Bearer <token>`. If you serve it under a non-localhost name, list it in
+`MCP_ALLOWED_HOSTS` (comma separated), the transport's DNS-rebinding guard rejects unknown Host headers.
+
+```sh
+MCP_TOKEN=s3cret bin/rails server -p 3000
+claude mcp add --transport http assetpilot-http http://localhost:3000/mcp --header "Authorization: Bearer s3cret"
+```
+
+### Claude Desktop
+
+Add to `claude_desktop_config.json` (Settings, Developer, Edit Config), then restart Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "assetpilot": {
+      "command": "/ABS/PATH/TO/assetpilot/bin/mcp",
+      "args": [],
+      "env": { "RAILS_ENV": "development" }
+    }
+  }
+}
+```
+
+Try: "What breaks if DB-PRIMARY-01 goes down?" (calls `impact_analysis`) or "Summarize the fleet".
+The 60-second demo script is in [docs/mcp-demo.md](docs/mcp-demo.md).
+
 ## Roadmap
 
 - **M1**: domain, seeds, REST API, impact analysis, specs, CI.

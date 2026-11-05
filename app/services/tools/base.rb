@@ -46,6 +46,10 @@ module Tools
 
       def mutating? = false
 
+      # MCP hints derived from the same flag the agent uses. Mutating tools are not read-only; a tool
+      # whose change cannot overwrite existing data may set destructive: false.
+      def destructive? = mutating?
+
       def call(input) = new.execute(input)
 
       private

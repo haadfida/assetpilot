@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# AssetPilot MCP server over stdio. stdout carries only JSON-RPC; everything else goes to stderr.
+# Usage: claude mcp add assetpilot -- /abs/path/to/bin/mcp
+ENV["RAILS_ENV"] ||= "development"
+ENV["MCP_STDIO"] = "1"
+$stdout.sync = true
+real_stdout = $stdout.dup
+$stdout.reopen($stderr) # stray puts/warnings from Rails or gems can't corrupt the protocol stream
+
+require_relative "../config/environment"
+Rails.logger = ActiveSupport::Logger.new($stderr)
+ActiveRecord::Base.logger = nil
+
+$stdout.reopen(real_stdout)
+server = AssetpilotMcp.build_server(allow_writes: ENV["MCP_ALLOW_WRITES"] != "0")
+MCP::Server::Transports::StdioTransport.new(server).open

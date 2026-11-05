@@ -26,6 +26,8 @@ gem "bootsnap", require: false
 gem "anthropic", "~> 2.5"
 # Validates tool inputs against the same JSON schemas sent to the model
 gem "json_schemer", "~> 2.5"
+# Official MCP Ruby SDK: exposes the same tools to Claude Code / Claude Desktop
+gem "mcp", "~> 1.9"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
