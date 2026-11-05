@@ -1,0 +1,17 @@
+{
+  "case": "checkout-ambiguous-person",
+  "calls": [
+    {
+      "name": "checkout_asset",
+      "input": {
+        "asset": "AP-00030",
+        "person": "Kuhn",
+        "due_on": "2026-11-12"
+      }
+    }
+  ],
+  "final_text": "Two people match: Shannon Kuhn and Amb. Dani Kuhn. Which one did you mean?",
+  "expect": {
+    "pass": true
+  }
+}

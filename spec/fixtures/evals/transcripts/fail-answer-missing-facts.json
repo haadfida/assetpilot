@@ -1,0 +1,19 @@
+{
+  "case": "overdue-laptops",
+  "calls": [
+    {
+      "name": "search_assets",
+      "input": {
+        "category": "laptop",
+        "overdue": true
+      }
+    }
+  ],
+  "final_text": "Several laptops are overdue.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "answer"
+    ]
+  }
+}

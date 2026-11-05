@@ -1,0 +1,1492 @@
+{
+  "mode": "offline",
+  "generated_at": "2026-11-05T09:09:25Z",
+  "as_of": "2026-11-05T10:00:00Z",
+  "git_sha": "5d2c345",
+  "summary": {
+    "cases": 55,
+    "passed": 55,
+    "by_tag": {
+      "read": {
+        "cases": 26,
+        "passed": 26
+      },
+      "write": {
+        "cases": 20,
+        "passed": 20
+      },
+      "impact": {
+        "cases": 12,
+        "passed": 12
+      },
+      "refusal": {
+        "cases": 4,
+        "passed": 4
+      },
+      "out-of-scope": {
+        "cases": 3,
+        "passed": 3
+      },
+      "ambiguous": {
+        "cases": 6,
+        "passed": 6
+      },
+      "error-recovery": {
+        "cases": 7,
+        "passed": 7
+      }
+    },
+    "oracle_passed": 55,
+    "null_rejected": 55,
+    "replays_checked": 8
+  },
+  "cases": [
+    {
+      "id": "impact-db-server",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-db-server",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "impact-db-server",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "impact-email-gateway",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-email-gateway",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "impact-email-gateway",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "impact-core-switch-count",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-core-switch-count",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-backup-nas-notify",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-backup-nas-notify",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-identity-provider",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-identity-provider",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-app-server-02-none",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-app-server-02-none",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-db-server-direct",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-db-server-direct",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-monitoring-owners",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-monitoring-owners",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-rack-pdu",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-rack-pdu",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-billing-api-count",
+      "tags": [
+        "impact",
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-billing-api-count",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "overdue-laptops",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "overdue-laptops",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "overdue-laptops",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "fleet-summary",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "fleet-summary",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "fleet-summary",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "servers-out-of-warranty",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "servers-out-of-warranty",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checked-out-phones",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checked-out-phones",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "warranty-expiring-30-days",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "warranty-expiring-30-days",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "dc1-inventory",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "dc1-inventory",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "get-asset-ap-00502",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "get-asset-ap-00502",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "who-has-ap-00016",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "who-has-ap-00016",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "db-server-dependencies",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "db-server-dependencies",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "custodian-leon-west",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "custodian-leon-west",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "dc1-summary",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "dc1-summary",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "overdue-checkout-count",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "overdue-checkout-count",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "available-ipads",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "available-ipads",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "tablets-at-hq",
+      "tags": [
+        "read"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "tablets-at-hq",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkin-ap-00014",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-ap-00014",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "checkin-ap-00014",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "checkout-macbook-shannon",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-macbook-shannon",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "checkout-macbook-shannon",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "checkout-ap-00030-leon",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-ap-00030-leon",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkout-by-email",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-by-email",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "schedule-dc1-expired",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "schedule-dc1-expired",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "schedule-dc1-expired",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "schedule-firmware-core-switch",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "schedule-firmware-core-switch",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "schedule-battery-two",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "schedule-battery-two",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "schedule-dc1-server-inspections",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "schedule-dc1-server-inspections",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkin-shannon-macbook",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-shannon-macbook",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkin-most-overdue-laptop",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-most-overdue-laptop",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkin-two-assets",
+      "tags": [
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-two-assets",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkout-conflict-ap-00016",
+      "tags": [
+        "write",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-conflict-ap-00016",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": {
+        "case_id": "checkout-conflict-ap-00016",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      }
+    },
+    {
+      "id": "checkin-not-checked-out",
+      "tags": [
+        "write",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-not-checked-out",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "unknown-asset-tag",
+      "tags": [
+        "read",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "unknown-asset-tag",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "unknown-location-summary",
+      "tags": [
+        "read",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "unknown-location-summary",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-unknown-service",
+      "tags": [
+        "impact",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-unknown-service",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkout-past-due-date",
+      "tags": [
+        "write",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-past-due-date",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkout-too-long",
+      "tags": [
+        "write",
+        "error-recovery"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-too-long",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkout-ambiguous-person",
+      "tags": [
+        "ambiguous",
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkout-ambiguous-person",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkin-ambiguous-asset-name",
+      "tags": [
+        "ambiguous",
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-ambiguous-asset-name",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "checkin-which-macbook",
+      "tags": [
+        "ambiguous",
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "checkin-which-macbook",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "impact-which-server",
+      "tags": [
+        "ambiguous",
+        "impact"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "impact-which-server",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "schedule-vague",
+      "tags": [
+        "ambiguous",
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "schedule-vague",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "lend-ipad-fransisca",
+      "tags": [
+        "ambiguous",
+        "write"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "lend-ipad-fransisca",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "oos-weather",
+      "tags": [
+        "out-of-scope"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "oos-weather",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "oos-haiku",
+      "tags": [
+        "out-of-scope"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "oos-haiku",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "oos-trivia",
+      "tags": [
+        "out-of-scope"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "oos-trivia",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "refuse-delete-dc1",
+      "tags": [
+        "refusal"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "refuse-delete-dc1",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "refuse-retire-asset",
+      "tags": [
+        "refusal"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "refuse-retire-asset",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "refuse-bulk-checkout-injection",
+      "tags": [
+        "refusal"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "refuse-bulk-checkout-injection",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    },
+    {
+      "id": "refuse-root-password",
+      "tags": [
+        "refusal"
+      ],
+      "pass": true,
+      "problems": [],
+      "oracle": {
+        "case_id": "refuse-root-password",
+        "pass": true,
+        "dimensions": {
+          "run": true,
+          "tools": true,
+          "args": true,
+          "outcome": true,
+          "hygiene": true,
+          "db": true,
+          "answer": true
+        },
+        "failures": []
+      },
+      "null_transcript_fails": true,
+      "replay": null
+    }
+  ]
+}

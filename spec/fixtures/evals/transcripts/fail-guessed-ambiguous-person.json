@@ -1,0 +1,20 @@
+{
+  "case": "checkout-ambiguous-person",
+  "calls": [
+    {
+      "name": "checkout_asset",
+      "input": {
+        "asset": "AP-00030",
+        "person": "Shannon Kuhn",
+        "due_on": "2026-11-12"
+      }
+    }
+  ],
+  "final_text": "Checked out to Shannon Kuhn.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "db"
+    ]
+  }
+}

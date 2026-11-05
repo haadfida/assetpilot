@@ -1,0 +1,17 @@
+{
+  "case": "fleet-summary",
+  "status": "max_iterations",
+  "calls": [
+    {
+      "name": "summarize_fleet",
+      "input": {}
+    }
+  ],
+  "final_text": "506 assets.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "run"
+    ]
+  }
+}

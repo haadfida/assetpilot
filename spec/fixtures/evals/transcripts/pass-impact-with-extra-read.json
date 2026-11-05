@@ -1,0 +1,22 @@
+{
+  "case": "impact-db-server",
+  "calls": [
+    {
+      "name": "get_asset",
+      "input": {
+        "asset": "DB-Server"
+      }
+    },
+    {
+      "name": "impact_analysis",
+      "input": {
+        "node_type": "asset",
+        "node": "DB-Server"
+      }
+    }
+  ],
+  "final_text": "12 services are affected, including Billing API.",
+  "expect": {
+    "pass": true
+  }
+}

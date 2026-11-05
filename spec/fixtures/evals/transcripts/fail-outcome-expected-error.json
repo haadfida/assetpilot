@@ -1,0 +1,25 @@
+{
+  "case": "impact-unknown-service",
+  "calls": [
+    {
+      "name": "impact_analysis",
+      "input": {
+        "node_type": "service",
+        "node": "Mainframe"
+      },
+      "output": {
+        "ok": true,
+        "data": {
+          "counts": {}
+        }
+      }
+    }
+  ],
+  "final_text": "I could not find that service.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "outcome"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# Agent evals. Offline (default without ANTHROPIC_API_KEY): validates evals/cases.jsonl against the seed data and
+# tool schemas and runs each case's oracle through the real tools and the grader. Live (--live, needs the key):
+# runs every case through Agent::Runner. Everything runs in a rolled-back transaction; the database is unchanged.
+# See `bin/evals --help`.
+ENV["RAILS_ENV"] ||= "development"
+require_relative "../config/environment"
+Rails.logger.level = :warn
+ActiveRecord::Base.logger = nil
+
+exit Evals::Cli.run(ARGV)
