@@ -45,7 +45,7 @@ target", where both ends are an Asset or a Service. If the target fails, the sou
 | `GET /api/assets/:id` | includes the open checkout and maintenance tasks |
 | `GET /api/people`, `/api/people/:id` | `q`, `department` |
 | `GET /api/services`, `/api/services/:id` | `criticality` |
-| `GET /api/impact/:type/:id` | `type` is `asset` or `service`; optional `max_depth` (default 10, max 25) |
+| `GET /api/impact/:type/:id` | `type` is `asset` or `service`; optional `max_depth` (default 10, max 25). Returns the impacted services, assets (with hop `depth`), people, counts and the `edges` between them (`source` depends on / runs on `target`) |
 
 Impact analysis uses a recursive CTE that walks dependents of the node, tracks the path per
 branch to cut cycles, and stops at the depth limit. It returns the dependent services and
@@ -205,11 +205,64 @@ bin/rails replays:verify   # re-runs every recorded tool call and checks the fix
 Scenarios live in `lib/replays/scenarios.rb`. If you change the seeds, a tool's output, or a template,
 rebuild the fixtures; the spec suite fails on stale ones.
 
+## Web UI
+
+`frontend/` is a React 19 + Vite + TypeScript + Tailwind app over the agent API: a chat that streams
+the agent's work, and a live dependency graph of what its tools touch.
+
+![Impact of DB-Server going down](frontend/docs/screenshots/impact-db-server.png)
+
+| | |
+| --- | --- |
+| ![Welcome](frontend/docs/screenshots/welcome.png) | ![Maintenance in Data-Center-1](frontend/docs/screenshots/maintenance-dc1.png) |
+| ![Failed checkout, tool card expanded](frontend/docs/screenshots/checkout-conflict.png) | ![Bring your own key](frontend/docs/screenshots/settings.png) |
+
+- **Chat.** The 8 recorded prompts are starter cards (and chips afterwards). Answer text streams in as
+  markdown; the model's `progress` notes are collapsible one-liners; each tool call is a card with its
+  name, input, a result summary, ok/error status and duration, expanding to the input JSON and raw output.
+  Free text is enabled only when a key is set; without one the composer explains that replays are available.
+- **Dependency graph** (react-flow, dagre left-to-right layout). An `impact_analysis` result draws the
+  failing node, the impacted services and assets by hop distance, and an overflow node for whatever is
+  beyond the tool's 25-item lists. Edges come from `GET /api/impact/:type/:id`, which returns the subgraph
+  with its `edges`; only shortest-path edges are drawn (the rest are counted in the legend), which keeps
+  ~60 nodes readable. People to notify are listed beside the graph, and can be drawn as nodes. Assets
+  touched by the other tools (search, check-out/in, maintenance) are highlighted, anchored on a node per
+  tool call; a failed call is marked red. Hovering a tool card highlights the nodes it produced.
+- **BYOK.** The settings dialog keeps the key in `sessionStorage` (this tab only) and sends it as
+  `x-anthropic-key` on both the create and the stream request; replay chips never send it. The stream is
+  read with `fetch` and a small SSE parser (`src/lib/sse.ts`), because `EventSource` cannot send headers.
+  The header badge reads **Replay · synthetic recording** or **Live · your key**.
+- **Honesty.** Every replayed answer carries a visible label: the tool calls and results are real against
+  the seeded data; the prose is templated, and timings and token counts are estimates.
+
+### Running it
+
+```sh
+bin/rails s -p 3100                   # the API (Postgres from docker-compose)
+cd frontend && npm install && npm run dev   # http://localhost:5173, proxies /api to :3100
+```
+
+`VITE_PROXY_TARGET` changes the proxied API in development. A production build calls `VITE_API_URL`
+(empty means same origin), and Rails must then allow the frontend origin: set `CORS_ORIGINS`
+(comma-separated; in development it defaults to the Vite dev and preview ports). Append `?speed=4` to the
+page URL to replay faster.
+
+```sh
+npm test               # Vitest: SSE parser, run reducer, graph model and layout (over db/replays/*.json)
+npm run lint && npm run typecheck && npm run build
+npm run screenshots    # headless Chromium against a running app: replays 4 prompts, checks BYOK headers
+                       # with a mocked API, fails on console errors; writes docs/screenshots/
+```
+
+`npm run screenshots` uses `playwright-core`; point `CHROMIUM_PATH` at a Chromium binary if Playwright's
+own is not installed. Lighthouse on the production build (`vite preview`): 100 performance,
+100 accessibility, 100 best practices (mobile and desktop presets).
+
 ## Roadmap
 
 - **M1**: domain, seeds, REST API, impact analysis, specs, CI.
-- **M2** (this branch): the agent. Natural-language Q&A and tool-using actions over SSE, BYOK, replay mode.
-- **M3**: React UI and an MCP server exposing the same tools.
+- **M2**: the agent. Natural-language Q&A and tool-using actions over SSE, BYOK, replay mode.
+- **M3**: React UI (`frontend/`, this branch) and an MCP server exposing the same tools.
 - **M4**: evals for the agent, then deployment.
 
 ## License
