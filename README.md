@@ -434,6 +434,16 @@ live-mode spec that drives the real runner with a scripted model.
 (Actions > CI > Run workflow, with an optional judge toggle) and is skipped unless the `ANTHROPIC_API_KEY`
 repository secret exists. Both upload their results as an artifact.
 
+## Deploy
+
+Prepared but not deployed. The repo has the config for a free-tier setup: Supabase Postgres, the Rails API on
+Render (`render.yaml`, native Ruby runtime, migrations and a first-boot seed in the start command) and the
+frontend on Vercel (`frontend/vercel.json`, `VITE_API_URL`). The step-by-step guide is in
+[docs/deploy.md](docs/deploy.md). Production boots in replay mode with no Anthropic key; visitors can bring
+their own. `script/production_check` boots the app the way Render does, against a local database, and
+checks that it works. Render's free plan sleeps when idle, so the first request after a while takes about
+30-60 s.
+
 ## Roadmap
 
 - **M1**: domain, seeds, REST API, impact analysis, specs, CI.

@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Boots AssetPilot exactly as Render would (RAILS_ENV=production, no Anthropic key, DATABASE_URL, a dummy
+# SECRET_KEY_BASE, the render.yaml start command) against a LOCAL Postgres database, then checks that:
+#   - /up is healthy and the replay catalog is served
+#   - a known prompt runs in replay mode and streams to `done` without any key
+#   - an unknown prompt without a key is rejected with the replay catalog (422)
+#   - CORS allows CORS_ORIGINS and nothing else
+#   - the MCP endpoint answers tools/list (read-only) for a host in MCP_ALLOWED_HOSTS and rejects other hosts
+#
+#   script/production_check            # uses postgres://postgres:postgres@localhost:5432/assetpilot_production_check
+#   KEEP_DB=1 script/production_check  # keep the database afterwards
+#
+# Nothing leaves this machine: the database is local and no Anthropic API call is made.
+set -euo pipefail
+SRC="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Run from a scratch copy without config/master.key: Render has no master key either, so this proves
+# production never needs the encrypted credentials. (The real key file is never touched.)
+APP="$(mktemp -d -t assetpilot-prodcheck.XXXXXX)"
+rsync -a --exclude .git --exclude config/master.key --exclude 'frontend/node_modules' --exclude 'tmp/*' --exclude 'log/*' \
+  --exclude 'storage/*' "$SRC/" "$APP/"
+cd "$APP"
+
+PORT="${PORT:-3200}"
+BASE="http://127.0.0.1:${PORT}"
+ORIGIN="https://assetpilot-demo.example.app"
+export RAILS_ENV=production
+export SECRET_KEY_BASE="${SECRET_KEY_BASE:-dummy-secret-key-base-for-the-local-production-boot-check-only}"
+export DATABASE_URL="${CHECK_DATABASE_URL:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-localhost}:${DB_PORT:-5432}/assetpilot_production_check}"
+export CORS_ORIGINS="$ORIGIN"
+export MCP_ALLOWED_HOSTS="127.0.0.1,localhost"
+export RAILS_LOG_LEVEL="${RAILS_LOG_LEVEL:-warn}"
+export PORT
+# As on Render: no dev/test gems on the load path.
+export BUNDLE_WITHOUT="development:test"
+export BUNDLE_GEMFILE="$APP/Gemfile"
+unset RAILS_MASTER_KEY || true
+unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN || true
+
+fail() { echo "FAIL: $*" >&2; exit 1; }
+pass() { echo "ok   $*"; }
+
+[ -e config/master.key ] && fail "config/master.key was copied"
+echo "== production boot check on ${BASE} (DATABASE_URL=${DATABASE_URL%%@*}@...)"
+bin/rails db:create >/dev/null 2>&1 || true
+
+# The render.yaml start command, verbatim apart from binding to localhost.
+LOG="$(mktemp -t assetpilot-prod.XXXXXX)"
+( bundle exec rails db:migrate && bundle exec rails db:seed_if_empty && exec bundle exec puma -C config/puma.rb -b "tcp://127.0.0.1:${PORT}" ) >"$LOG" 2>&1 &
+SERVER=$!
+cleanup() {
+  kill "$SERVER" 2>/dev/null || true
+  pkill -P "$SERVER" 2>/dev/null || true
+  wait "$SERVER" 2>/dev/null || true
+  if [ -z "${KEEP_DB:-}" ]; then DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:drop >/dev/null 2>&1 || true; fi
+  rm -rf "$APP"
+}
+trap cleanup EXIT
+
+for _ in $(seq 1 90); do
+  curl -sf "$BASE/up" >/dev/null 2>&1 && break
+  kill -0 "$SERVER" 2>/dev/null || { cat "$LOG"; fail "server exited during boot"; }
+  sleep 1
+done
+curl -sf "$BASE/up" >/dev/null || { cat "$LOG"; fail "/up not healthy after 90 s"; }
+pass "booted in production: $(grep -m1 -o 'Seeded:.*\|already has [0-9]* assets' "$LOG" || echo 'seed step done')"
+
+replays=$(curl -sf "$BASE/api/agent/replays")
+n=$(echo "$replays" | ruby -rjson -e 'puts JSON.parse($stdin.read)["data"].size')
+[ "$n" -ge 1 ] || fail "replay catalog is empty"
+pass "GET /api/agent/replays: $n replayable prompts"
+
+created=$(curl -sf -XPOST "$BASE/api/agent/runs" -H 'content-type: application/json' -d '{"prompt":"What breaks if DB-Server goes down?"}')
+mode=$(echo "$created" | ruby -rjson -e 'puts JSON.parse($stdin.read)["data"]["mode"]')
+id=$(echo "$created" | ruby -rjson -e 'puts JSON.parse($stdin.read)["data"]["id"]')
+[ "$mode" = "replay" ] || fail "expected replay mode without a key, got $mode"
+stream=$(curl -sfN --max-time 60 "$BASE/api/agent/runs/$id/stream?speed=50")
+echo "$stream" | grep -q '^event: tool_call' || fail "stream had no tool_call event"
+echo "$stream" | grep -q '^event: done' || fail "stream did not finish"
+echo "$stream" | grep -q '"status":"succeeded"' || fail "replay did not succeed"
+pass "POST /api/agent/runs + stream: replay run #$id streamed tool calls and finished (no key)"
+
+code=$(curl -s -o /dev/null -w '%{http_code}' -XPOST "$BASE/api/agent/runs" -H 'content-type: application/json' -d '{"prompt":"Something nobody recorded"}')
+[ "$code" = "422" ] || fail "unknown prompt without a key: expected 422, got $code"
+pass "unknown prompt without a key is rejected (422 with the replay catalog)"
+
+allow=$(curl -s -o /dev/null -D - -XOPTIONS "$BASE/api/agent/runs" -H "Origin: $ORIGIN" -H 'Access-Control-Request-Method: POST' \
+  -H 'Access-Control-Request-Headers: content-type,x-anthropic-key' | tr -d '\r' | grep -i '^access-control-allow-origin:' || true)
+[ "$allow" = "access-control-allow-origin: $ORIGIN" ] || fail "CORS preflight from $ORIGIN not allowed (got '$allow')"
+other=$(curl -s -o /dev/null -D - -XOPTIONS "$BASE/api/agent/runs" -H 'Origin: https://evil.example' -H 'Access-Control-Request-Method: POST' | grep -ci '^access-control-allow-origin' || true)
+[ "$other" = "0" ] || fail "CORS allowed an unlisted origin"
+pass "CORS: $ORIGIN allowed, other origins not"
+
+mcp=$(curl -sf -XPOST "$BASE/mcp" -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+tools=$(echo "$mcp" | ruby -rjson -e 'puts JSON.parse($stdin.read)["result"]["tools"].map { |t| t["name"] }.sort.join(",")')
+[ -n "$tools" ] || fail "MCP tools/list returned no tools"
+echo "$tools" | grep -q checkout_asset && fail "MCP over HTTP listed a mutating tool without MCP_ALLOW_WRITES"
+pass "POST /mcp tools/list (read-only): $tools"
+bad=$(curl -s -o /dev/null -w '%{http_code}' -XPOST "$BASE/mcp" -H 'Host: attacker.example' -H 'content-type: application/json' \
+  -H 'accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+[ "$bad" != "200" ] || fail "MCP accepted a Host header outside MCP_ALLOWED_HOSTS"
+pass "MCP rejects a Host outside MCP_ALLOWED_HOSTS (HTTP $bad)"
+
+grep -qi 'error' "$LOG" && { echo "--- server log mentions errors:"; grep -i 'error' "$LOG" | head -20; fail "errors in the server log"; }
+echo "PRODUCTION BOOT CHECK PASSED"

@@ -29,13 +29,16 @@ gem "json_schemer", "~> 2.5"
 # Official MCP Ruby SDK: exposes the same tools to Claude Code / Claude Desktop
 gem "mcp", "~> 1.9"
 
+# Deterministic synthetic seed data (lib/seed_data.rb). Needed in production too: the deployed demo is
+# seeded from it, and lib/ is eager-loaded there.
+gem "faker"
+
 # CORS for the React frontend when it is served from another origin (CORS_ORIGINS)
 gem "rack-cors", "~> 3.0"
 
 group :development, :test do
   gem "rspec-rails"
   gem "factory_bot_rails"
-  gem "faker"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 

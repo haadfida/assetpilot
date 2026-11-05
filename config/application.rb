@@ -40,5 +40,8 @@ module Assetpilot
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Active Storage is loaded by the framework but unused; no image variants, so no image_processing gem.
+    config.active_storage.variant_processor = :disabled
   end
 end

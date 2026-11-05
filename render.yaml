@@ -1,0 +1,43 @@
+# Render Blueprint for the AssetPilot API (Rails 8, API only). See docs/deploy.md for the full walkthrough.
+#
+# Native Ruby runtime (Render reads .ruby-version), so no Dockerfile is needed. The free plan has no
+# pre-deploy command, so migrations and the first seed run in the start command; db:seed_if_empty only
+# seeds an empty database, so restarts never wipe the demo data.
+#
+# Without an Anthropic key the app serves the 8 recorded prompts in replay mode; visitors can paste
+# their own key in the UI (BYOK) for live runs. No key is configured here on purpose.
+services:
+  - type: web
+    name: assetpilot-api
+    runtime: ruby
+    plan: free
+    region: frankfurt # pick the region closest to your Supabase project
+    branch: main
+    buildCommand: bundle install
+    startCommand: bundle exec rails db:migrate && bundle exec rails db:seed_if_empty && bundle exec puma -C config/puma.rb
+    healthCheckPath: /up
+    autoDeploy: true
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: BUNDLE_WITHOUT
+        value: development:test
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      # Supabase session pooler connection string (IPv4), e.g.
+      # postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+      # The deployed frontend origin(s), comma-separated, e.g. https://assetpilot.vercel.app
+      - key: CORS_ORIGINS
+        sync: false
+      # Host names the /mcp endpoint answers to (DNS-rebinding guard), e.g. assetpilot-api.onrender.com
+      - key: MCP_ALLOWED_HOSTS
+        sync: false
+      # Optional: require `Authorization: Bearer <token>` on /mcp. Leave unset for an open read-only endpoint.
+      - key: MCP_TOKEN
+        sync: false
+      - key: RAILS_MAX_THREADS
+        value: "3"
+      - key: RAILS_LOG_LEVEL
+        value: info
