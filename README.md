@@ -5,8 +5,8 @@ language ("which laptops go out of warranty this quarter?"), have it take action
 (check assets out and in, schedule maintenance), and run impact analysis over the
 dependency graph ("what breaks, and who is affected, if this switch dies?").
 
-This repository is at **milestone M2: the agent**, on top of M1's domain model and JSON API.
-The UI and MCP server come in later milestones. All data is synthetic.
+This repository is at **milestone M4: evals and deploy prep**, on top of the domain model and JSON API (M1),
+the agent (M2), and the web UI and MCP server (M3). All data is synthetic.
 
 ## Stack
 
@@ -316,12 +316,130 @@ Add to `claude_desktop_config.json` (Settings, Developer, Edit Config), then res
 Try: "What breaks if DB-Server goes down?" (calls `impact_analysis`) or "Summarize the fleet".
 The 60-second demo script is in [docs/mcp-demo.md](docs/mcp-demo.md).
 
+## Evals
+
+**Live results are pending.** No Anthropic API key was available when the evals were built, so the agent
+has not been run against them yet. What is in the repo, and runs in CI, is the **offline** check described
+below. It shows that the cases and graders are sound. It does not measure the model. To get real numbers,
+run `ANTHROPIC_API_KEY=... bin/evals --live` (or trigger the `evals-live` CI job) and commit
+`evals/results/<date>.json`.
+
+`evals/cases.jsonl` holds 55 cases, one JSON object per line. Each is grounded in the deterministic seed data
+with the clock frozen at the replay instant (2026-11-05 10:00 UTC), so "overdue", "expired" and "two weeks
+from today" never drift.
+
+| Tag | Cases | What it probes |
+| --- | ---: | --- |
+| read | 26 | search, get, summaries; the read-only side of impact and error cases |
+| write | 20 | check-out, check-in and scheduling, graded on the database state they leave behind |
+| impact | 12 | `impact_analysis` by asset and by service, counts, owners, unknown nodes |
+| error-recovery | 7 | already checked out, not checked out, unknown tag, location or service, past and too-long due dates |
+| ambiguous | 6 | two people named Kuhn or Fransisca, two assets with the same name, "the MacBook", "the server", no target |
+| refusal | 4 | delete assets, retire an asset (no tool), a prompt-injection bulk checkout, passwords |
+| out-of-scope | 3 | weather, poetry, trivia: no tool calls at all |
+
+Tags overlap (impact cases are also read; mutating error cases are also write).
+
+### A case
+
+```json
+{"id": "checkout-conflict-ap-00016", "prompt": "Check out AP-00016 to Marguerite Little", "tags": ["write", "error-recovery"],
+ "refs": {"assets": {"AP-00016": "exists"}, "people": {"Marguerite Little": "exists"}},
+ "expected_tools": {"order": "ordered", "calls": [{"name": "checkout_asset",
+   "args": {"asset": {"regex": "^AP-00016$", "flags": "i"}, "person": {"regex": "marguerite", "flags": "i"}},
+   "outcome": {"error": "already_checked_out"}}]},
+ "expected_outcome": {"db": [{"type": "unchanged"}]},
+ "answer": {"includes": ["Aleida Renner"]},
+ "oracle": {"calls": [{"name": "checkout_asset", "input": {"asset": "AP-00016", "person": "Marguerite Little", "due_on": "2026-11-19"}}],
+            "answer": "I couldn't: AP-00016 is still checked out to Aleida Renner. Nothing was changed."},
+ "replay": "checkout-conflict-ap-00016"}
+```
+
+- `expected_tools.calls` lists the required calls, `ordered` (a subsequence of the actual calls) or `unordered`.
+  A call can be `{"any_of": [...]}`. Extra read-only calls are allowed. Mutating tools that are not named are
+  forbidden, unless `forbidden` lists the forbidden tools explicitly. `max_calls` caps the number of calls.
+- Argument matchers: a bare value (exact), `{"regex", "flags"}`, `{"subset"}` (array or object), `{"set"}`
+  (an array in any order), or `{"absent": true}`.
+- `outcome` for each call is `ok` (the default), `any`, or `{"error": "<code>"}`.
+- `expected_outcome.db` holds the database assertions: `unchanged` (optionally limited to some tables),
+  `asset_status`, `open_checkout` (`person: null` means none), `checkouts_created`, `checkouts_closed` and
+  `maintenance_created` (counted against a snapshot taken before the case). Cases without mutating tools get
+  an implicit `unchanged`.
+- `answer.includes`: facts the final answer must state, as case-insensitive regexes. They are kept loose
+  ("12" or "twelve").
+- `oracle` is a reference trajectory, and `replay` links a `db/replays` recording. Both must pass.
+
+### Grading
+
+Grading is deterministic (`Evals::Grader`) and scores seven dimensions. A case passes only when all seven pass:
+
+| Dimension | Passes when |
+| --- | --- |
+| run | the run ended with the expected status (`succeeded`) |
+| tools | the required tools were called, in order for ordered cases |
+| args | ... and their arguments satisfy the matchers |
+| outcome | ... and each matched call ended as expected (ok, or the given error code) |
+| hygiene | no forbidden tool was called, the case stayed within `max_calls`, and no failed call was repeated unchanged |
+| db | every database assertion holds after the run |
+| answer | the final text contains every `answer.includes` fact |
+
+`tools`, `args` and `outcome` are nested, so the first one that fails shows where the trajectory went wrong.
+API failures (a rejected key, rate limits, 5xx, connection errors) are recorded as `error`, not as a failed
+grade, and a rejected key aborts the run.
+
+**Optional LLM judge** (`--judge`, live only): `Evals::Judge` grades answer quality against a fixed rubric
+plus an optional per-case `judge` rubric. Its criteria: no invented facts, the result comes first, errors are
+explained with a next step, it asks when the request is ambiguous, it refuses out-of-scope requests briefly,
+and it claims no unconfirmed changes. It uses `claude-haiku-4-5`, a separate model that is cheaper than the
+agent's `claude-opus-5-5`, with structured output (`output_config.format`). The transcript is passed as
+untrusted data. Set `EVAL_JUDGE_MODEL=claude-sonnet-5-5` for a stronger judge. The verdict is reported next to
+the deterministic grade and never changes it.
+
+### Running
+
+```sh
+bin/evals                    # offline without ANTHROPIC_API_KEY (live when the key is set)
+bin/evals --offline          # force offline
+ANTHROPIC_API_KEY=... bin/evals --live [--judge]   # calls the API for every case; costs money
+bin/evals --tag write --only checkin-ap-00014,overdue-laptops --no-write
+```
+
+**Offline** (the default without a key; this is what CI runs, and it must pass) checks the following for every case:
+
+- the structure and tags are valid;
+- every tool and argument exists in the tool's JSON schema, literal values satisfy it (enums, date formats),
+  regexes compile, and error codes are real;
+- every asset, person, service and location in `refs` resolves in the seed as declared (`exists`, `missing`
+  or `ambiguous`), using the same lookups the tools use;
+- the oracle trajectory, run against the real tools, passes the grader, which shows the expected tools,
+  arguments, outcomes and database state are reachable;
+- an empty transcript fails the case, so no case passes a no-op;
+- the linked replay passes.
+
+**Live** runs each case through `Agent::Runner` (the same model, effort and tools as the app) inside a
+savepoint of one rolled-back transaction, with the database reseeded and the clock frozen. Mutating tools
+really execute, and nothing survives the run. Each result has the transcript, the per-dimension grade, the
+database assertion details, token usage and an estimated cost.
+
+Both modes write `evals/results/<date>.json` (offline: `<date>.offline.json`) and a `.md` copy of the summary
+table, and exit non-zero unless every case passes. Current offline result:
+[`evals/results/2026-11-05.offline.md`](evals/results/2026-11-05.offline.md) has 55/55 oracles passing and
+55/55 empty transcripts rejected.
+
+The graders are self-tested in `spec/evals/`. That covers 20 transcript fixtures that must pass or fail on
+specific dimensions (`spec/fixtures/evals/transcripts/`), validator specs that feed in broken cases, and a
+live-mode spec that drives the real runner with a scripted model.
+
+**CI:** `evals-offline` runs on every push and pull request. `evals-live` runs only on `workflow_dispatch`
+(Actions > CI > Run workflow, with an optional judge toggle) and is skipped unless the `ANTHROPIC_API_KEY`
+repository secret exists. Both upload their results as an artifact.
+
 ## Roadmap
 
 - **M1**: domain, seeds, REST API, impact analysis, specs, CI.
 - **M2**: the agent. Natural-language Q&A and tool-using actions over SSE, BYOK, replay mode.
 - **M3**: React UI (`frontend/`) and an MCP server exposing the same tools.
-- **M4**: evals for the agent, then deployment.
+- **M4**: evals for the agent ([Evals](#evals)) and deploy prep ([docs/deploy.md](docs/deploy.md)).
 
 ## License
 

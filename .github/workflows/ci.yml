@@ -4,6 +4,12 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      judge:
+        description: "Live evals: also run the LLM judge (--judge)"
+        type: boolean
+        default: false
 
 jobs:
   test:
@@ -58,3 +64,94 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+
+  # Offline evals: every case in evals/cases.jsonl checked against the seed data and tool schemas, and its
+  # oracle trajectory run through the real tools and the grader. No API key, no network.
+  evals-offline:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      RAILS_ENV: test
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Prepare database
+        run: bin/rails db:prepare
+      - name: Offline evals
+        run: bin/evals --offline --out tmp/evals
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evals-offline
+          path: tmp/evals/
+
+  # Secrets can't be read in a job-level `if`, so this job turns "is the secret set?" into an output.
+  evals-key:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      present: ${{ steps.check.outputs.present }}
+    steps:
+      - id: check
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: echo "present=$([ -n "$KEY" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+  # Live evals: manual only (Actions > CI > Run workflow), and skipped unless the ANTHROPIC_API_KEY secret
+  # exists. Calls the Claude API for every case, so it costs money.
+  evals-live:
+    needs: evals-key
+    if: github.event_name == 'workflow_dispatch' && needs.evals-key.outputs.present == 'true'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      RAILS_ENV: test
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Prepare database
+        run: bin/rails db:prepare
+      - name: Live evals
+        run: bin/evals --live ${{ inputs.judge && '--judge' || '' }} --out tmp/evals
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evals-live
+          path: tmp/evals/
