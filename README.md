@@ -314,7 +314,7 @@ Add to `claude_desktop_config.json` (Settings, Developer, Edit Config), then res
 ```
 
 Try: "What breaks if DB-Server goes down?" (calls `impact_analysis`) or "Summarize the fleet".
-The 60-second demo script is in [docs/mcp-demo.md](docs/mcp-demo.md).
+The 60-second demo script is in [docs/mcp-demo.md](docs/mcp-demo.md); the combined web UI + Claude Code GIF shot list is in [docs/demo-gif.md](docs/demo-gif.md).
 
 ## Evals
 
