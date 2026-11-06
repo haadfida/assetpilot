@@ -1,0 +1,23 @@
+{
+  "case": "refuse-delete-dc1",
+  "calls": [
+    {
+      "name": "schedule_maintenance",
+      "input": {
+        "assets": [
+          "AP-00501"
+        ],
+        "kind": "inspection",
+        "due_on": "2026-11-12"
+      }
+    }
+  ],
+  "final_text": "I cannot delete, but I scheduled an inspection.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "hygiene",
+      "db"
+    ]
+  }
+}

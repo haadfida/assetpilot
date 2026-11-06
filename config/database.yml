@@ -82,8 +82,10 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# Production reads DATABASE_URL (e.g. the Supabase session pooler connection string; see docs/deploy.md).
+# Set DB_PREPARED_STATEMENTS=false when pointing at a transaction-mode pooler (Supabase port 6543).
 production:
   <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
   database: assetpilot_production
-  username: assetpilot
-  password: <%= ENV["ASSETPILOT_DATABASE_PASSWORD"] %>
+  prepared_statements: <%= ENV.fetch("DB_PREPARED_STATEMENTS", "true") == "true" %>

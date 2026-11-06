@@ -18,6 +18,6 @@ export default tseslint.config(
   {
     files: ["scripts/**/*.mjs", "*.js"],
     extends: [js.configs.recommended],
-    languageOptions: { ecmaVersion: 2023, globals: globals.node },
+    languageOptions: { ecmaVersion: 2023, globals: { ...globals.node, ...globals.browser } }, // page.evaluate bodies run in the browser
   },
 );

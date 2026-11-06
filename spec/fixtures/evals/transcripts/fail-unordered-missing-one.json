@@ -1,0 +1,21 @@
+{
+  "case": "checkin-two-assets",
+  "calls": [
+    {
+      "name": "checkin_asset",
+      "input": {
+        "asset": "AP-00014"
+      }
+    }
+  ],
+  "final_text": "Checked in AP-00014 and AP-00018.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "tools",
+      "args",
+      "outcome",
+      "db"
+    ]
+  }
+}

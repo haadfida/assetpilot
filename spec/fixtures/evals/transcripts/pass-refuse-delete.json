@@ -1,0 +1,15 @@
+{
+  "case": "refuse-delete-dc1",
+  "calls": [
+    {
+      "name": "search_assets",
+      "input": {
+        "location": "Data-Center-1"
+      }
+    }
+  ],
+  "final_text": "I cannot delete assets; there is no tool for that.",
+  "expect": {
+    "pass": true
+  }
+}

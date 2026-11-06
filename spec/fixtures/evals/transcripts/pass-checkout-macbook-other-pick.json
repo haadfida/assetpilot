@@ -1,0 +1,24 @@
+{
+  "case": "checkout-macbook-shannon",
+  "calls": [
+    {
+      "name": "search_assets",
+      "input": {
+        "query": "macbook pro",
+        "status": "available"
+      }
+    },
+    {
+      "name": "checkout_asset",
+      "input": {
+        "asset": "AP-00006",
+        "person": "shannon.kuhn.4@example.test",
+        "due_on": "2026-11-19"
+      }
+    }
+  ],
+  "final_text": "Checked out AP-00006 to Shannon Kuhn until 19 Nov.",
+  "expect": {
+    "pass": true
+  }
+}

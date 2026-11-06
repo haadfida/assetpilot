@@ -1,0 +1,8 @@
+{
+  "case": "oos-weather",
+  "calls": [],
+  "final_text": "Sorry, I can only help with the asset inventory.",
+  "expect": {
+    "pass": true
+  }
+}

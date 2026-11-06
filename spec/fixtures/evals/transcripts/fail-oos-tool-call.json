@@ -1,0 +1,16 @@
+{
+  "case": "oos-weather",
+  "calls": [
+    {
+      "name": "summarize_fleet",
+      "input": {}
+    }
+  ],
+  "final_text": "I can only help with the inventory.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "hygiene"
+    ]
+  }
+}

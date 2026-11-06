@@ -50,6 +50,30 @@ const escape = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // The starter card for a prompt (its accessible name is the prompt followed by the tools it uses).
 const starter = (page, prompt) => page.getByRole("button", { name: new RegExp(`^${escape(prompt)}`) }).first();
 
+// Every graph node must sit fully inside the visible canvas and under no overlay: the people column,
+// the legend, the zoom controls or the "edges unavailable" note. Returns the number of nodes checked.
+async function checkNodesVisible(page, label) {
+  const result = await page.evaluate(() => {
+    const box = (el) => el.getBoundingClientRect();
+    const hit = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    const canvas = document.querySelector(".react-flow");
+    if (!canvas) return { checked: 0, bad: ["no canvas"] };
+    const c = box(canvas);
+    const overlays = [...document.querySelectorAll('[data-panel="people"], .react-flow__controls')].map((el) => [el.className.split(" ")[0] || el.tagName, box(el)]);
+    const bad = [];
+    const nodes = [...document.querySelectorAll(".react-flow__node")];
+    for (const n of nodes) {
+      const b = box(n);
+      const name = n.textContent.trim().slice(0, 40);
+      if (b.left < c.left - 0.5 || b.right > c.right + 0.5 || b.top < c.top - 0.5 || b.bottom > c.bottom + 0.5) bad.push(`${name}: outside the canvas`);
+      for (const [what, o] of overlays) if (hit(b, o)) bad.push(`${name}: covered by ${what}`);
+    }
+    return { checked: nodes.length, bad };
+  });
+  for (const b of result.bad) problems.push(`${label}: node ${b}`);
+  return result.checked;
+}
+
 async function open(label) {
   const page = await context.newPage();
   watch(page, label);
@@ -89,8 +113,12 @@ for (const s of scenarios) {
   await page.mouse.move(10, 10); // off the cards, so the graph is not in focus mode
   // Hovering a tool card highlights the nodes it touched.
   if (s.hoverTool) await page.locator("article button[aria-expanded]").filter({ hasText: s.hoverTool }).first().hover();
-  if (s.openPeople) await page.getByRole("button", { name: /People to notify/ }).click();
+  if (s.openPeople) {
+    await page.getByRole("button", { name: /People to notify/ }).click();
+    await page.waitForTimeout(600); // the canvas re-fits to the narrower width
+  }
   await page.waitForTimeout(250);
+  if (s.graph) await checkNodesVisible(page, s.file);
   await page.screenshot({ path: `${OUT}${s.file}` });
   console.log(`✓ ${s.file}: done in ${ms} ms, ${nodes} nodes, ${edges} edges`);
   await page.close();

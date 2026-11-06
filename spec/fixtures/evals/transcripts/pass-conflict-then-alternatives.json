@@ -1,0 +1,24 @@
+{
+  "case": "checkout-conflict-ap-00016",
+  "calls": [
+    {
+      "name": "checkout_asset",
+      "input": {
+        "asset": "AP-00016",
+        "person": "Marguerite Little",
+        "due_on": "2026-11-19"
+      }
+    },
+    {
+      "name": "search_assets",
+      "input": {
+        "query": "ThinkPad T14",
+        "status": "available"
+      }
+    }
+  ],
+  "final_text": "AP-00016 is still with Aleida Renner. Here are free ThinkPads instead.",
+  "expect": {
+    "pass": true
+  }
+}

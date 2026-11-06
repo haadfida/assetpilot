@@ -1,0 +1,16 @@
+{
+  "case": "impact-db-server",
+  "calls": [
+    {
+      "name": "impact_analysis",
+      "input": {
+        "node_type": "asset",
+        "node": "AP-00502"
+      }
+    }
+  ],
+  "final_text": "Twelve services go down with it, Billing API first.",
+  "expect": {
+    "pass": true
+  }
+}

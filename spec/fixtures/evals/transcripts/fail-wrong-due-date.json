@@ -1,0 +1,29 @@
+{
+  "case": "checkout-macbook-shannon",
+  "calls": [
+    {
+      "name": "search_assets",
+      "input": {
+        "query": "MacBook Pro",
+        "status": "available"
+      }
+    },
+    {
+      "name": "checkout_asset",
+      "input": {
+        "asset": "AP-00004",
+        "person": "Shannon Kuhn",
+        "due_on": "2026-11-20"
+      }
+    }
+  ],
+  "final_text": "Done.",
+  "expect": {
+    "pass": false,
+    "failed": [
+      "args",
+      "outcome",
+      "db"
+    ]
+  }
+}
