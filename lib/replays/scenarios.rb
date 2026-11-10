@@ -90,15 +90,15 @@ module Replays
 
       Scenario.new(
         slug: "dc1-warranty-maintenance",
-        prompt: "Schedule maintenance for assets with expired warranty in Data-Center-1",
-        aliases: ["Schedule inspections for out-of-warranty kit in Data-Center-1"],
+        prompt: "Schedule an inspection for every server in Data-Center-1 whose warranty has expired, due 2026-11-12.",
+        aliases: ["Schedule inspections due 2026-11-12 for out-of-warranty servers in Data-Center-1"],
         script: lambda do |s|
-          found = s.turn("First I'll find the Data-Center-1 assets whose warranty has expired.") do |t|
-            t.call("search_assets", location: "Data-Center-1", warranty: "expired", limit: 50)
+          found = s.turn("First I'll find the Data-Center-1 servers whose warranty has expired.") do |t|
+            t.call("search_assets", location: "Data-Center-1", category: "server", warranty: "expired", limit: 50)
           end
-          due = (Date.iso8601(found["as_of"]) + 7).iso8601
+          due = "2026-11-12" # the date the prompt gives; one week after Builder::AS_OF
           tags = found["assets"].map { |a| a["tag"] }
-          r = s.turn("Scheduling an inspection for each of the #{tags.size} assets, due in one week.") do |t|
+          r = s.turn("Scheduling an inspection for each of the #{tags.size} servers, due #{due}.") do |t|
             t.call("schedule_maintenance", assets: tags, kind: "inspection", due_on: due)
           end
           lines = found["assets"].map { |a| "#{a['tag']} #{a['name']} (warranty ended #{T.date(a['warranty_until'])})" }
@@ -107,8 +107,6 @@ module Replays
             I scheduled **#{T.plural(r['scheduled_count'], 'inspection')}** in Data-Center-1, all due **#{T.date(r['due_on'])}**:
 
             #{T.bullets(lines)}#{skipped}
-
-            I used *inspection* as the task type; tell me if any of these should be a repair or firmware update instead.
           MD
         end
       ),

@@ -21,7 +21,7 @@ const scenarios = [
   { file: "impact-email-gateway.png", prompt: "What happens if the Email Gateway goes down?", expectTools: ["impact_analysis"], graph: true },
   {
     file: "maintenance-dc1.png",
-    prompt: "Schedule maintenance for assets with expired warranty in Data-Center-1",
+    prompt: "Schedule an inspection for every server in Data-Center-1 whose warranty has expired, due 2026-11-12.",
     expectTools: ["search_assets", "schedule_maintenance"],
     graph: true,
     hoverTool: "schedule_maintenance",

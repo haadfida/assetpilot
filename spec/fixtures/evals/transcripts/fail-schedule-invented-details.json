@@ -1,0 +1,26 @@
+{
+  "case": "schedule-dc1-expired",
+  "calls": [
+    {
+      "name": "search_assets",
+      "input": {
+        "location": "Data-Center-1",
+        "warranty": "expired",
+        "limit": 50
+      }
+    },
+    {
+      "name": "schedule_maintenance",
+      "input": {
+        "assets": ["AP-00502", "AP-00503", "AP-00505"],
+        "kind": "inspection",
+        "due_on": "2026-11-12"
+      }
+    }
+  ],
+  "final_text": "I scheduled inspections for AP-00502, AP-00503 and AP-00505, due 12 Nov 2026. What kind of maintenance did you want?",
+  "expect": {
+    "pass": false,
+    "failed": ["hygiene", "db"]
+  }
+}

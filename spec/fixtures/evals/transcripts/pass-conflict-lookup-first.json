@@ -1,0 +1,15 @@
+{
+  "case": "checkout-conflict-ap-00016",
+  "calls": [
+    {
+      "name": "get_asset",
+      "input": {
+        "asset": "AP-00016"
+      }
+    }
+  ],
+  "final_text": "I can't check out AP-00016 to Marguerite Little yet because Aleida Renner still has it. Should I check it in first?",
+  "expect": {
+    "pass": true
+  }
+}
