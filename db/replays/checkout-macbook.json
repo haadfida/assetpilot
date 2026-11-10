@@ -11,9 +11,9 @@
   "status": "succeeded",
   "stop_reason": "end_turn",
   "iterations": 2,
-  "duration_ms": 8760,
+  "duration_ms": 8826,
   "usage": {
-    "input_tokens": 6159,
+    "input_tokens": 6303,
     "output_tokens": 123,
     "cache_read_input_tokens": 0,
     "cache_creation_input_tokens": 0,
@@ -40,13 +40,13 @@
       }
     },
     {
-      "t_ms": 1997,
+      "t_ms": 2017,
       "type": "tool_result",
       "iteration": 1,
       "tool_use_id": "toolu_replay_01",
       "name": "search_assets",
       "is_error": false,
-      "duration_ms": 3,
+      "duration_ms": 23,
       "output": {
         "ok": true,
         "data": {
@@ -110,14 +110,14 @@
       }
     },
     {
-      "t_ms": 3197,
+      "t_ms": 3217,
       "type": "progress",
       "iteration": 2,
       "text": "AP-00004 is free; checking it out to Shannon Kuhn until 2026-11-19.",
       "duration_ms": 804
     },
     {
-      "t_ms": 4351,
+      "t_ms": 4371,
       "type": "tool_use",
       "iteration": 2,
       "id": "toolu_replay_02",
@@ -129,13 +129,13 @@
       }
     },
     {
-      "t_ms": 4356,
+      "t_ms": 4422,
       "type": "tool_result",
       "iteration": 2,
       "tool_use_id": "toolu_replay_02",
       "name": "checkout_asset",
       "is_error": false,
-      "duration_ms": 5,
+      "duration_ms": 51,
       "output": {
         "ok": true,
         "data": {
@@ -161,7 +161,7 @@
       }
     },
     {
-      "t_ms": 5556,
+      "t_ms": 5622,
       "type": "text",
       "iteration": 2,
       "text": "Checked out **AP-00004 Beahan MacBook Pro 14** to **Shannon Kuhn** (shannon.kuhn.4@example.test), due back **19 Nov 2026**.\n\nIt was one of 48 available MacBook Pros; I picked the first by tag, located at Summerborough HQ. Note that its warranty expired on 8 Sep 2026.",

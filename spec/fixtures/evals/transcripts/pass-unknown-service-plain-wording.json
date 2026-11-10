@@ -1,0 +1,16 @@
+{
+  "case": "impact-unknown-service",
+  "calls": [
+    {
+      "name": "impact_analysis",
+      "input": {
+        "node_type": "service",
+        "node": "Mainframe"
+      }
+    }
+  ],
+  "final_text": "No service has that name, so there is nothing to trace. Give me another name or a tag and I'll run the check.",
+  "expect": {
+    "pass": true
+  }
+}

@@ -80,7 +80,7 @@ Replayable prompts (matching ignores case and punctuation; each has a few aliase
 | What breaks if DB-Server goes down? | impact_analysis |
 | Which laptops are overdue and who has them? | search_assets |
 | Check in asset AP-00014 | checkin_asset |
-| Schedule maintenance for assets with expired warranty in Data-Center-1 | search_assets, schedule_maintenance |
+| Schedule an inspection for every server in Data-Center-1 whose warranty has expired, due 2026-11-12. | search_assets, schedule_maintenance |
 | Summarize the fleet | summarize_fleet |
 | Check out an available MacBook Pro to Shannon Kuhn for two weeks | search_assets, checkout_asset |
 | Check out AP-00016 to Marguerite Little | checkout_asset (fails: already out), search_assets |
@@ -345,9 +345,11 @@ Tags overlap (impact cases are also read; mutating error cases are also write).
 ```json
 {"id": "checkout-conflict-ap-00016", "prompt": "Check out AP-00016 to Marguerite Little", "tags": ["write", "error-recovery"],
  "refs": {"assets": {"AP-00016": "exists"}, "people": {"Marguerite Little": "exists"}},
- "expected_tools": {"order": "ordered", "calls": [{"name": "checkout_asset",
-   "args": {"asset": {"regex": "^AP-00016$", "flags": "i"}, "person": {"regex": "marguerite", "flags": "i"}},
-   "outcome": {"error": "already_checked_out"}}]},
+ "expected_tools": {"order": "ordered", "calls": [{"any_of": [
+   {"name": "checkout_asset",
+    "args": {"asset": {"regex": "^AP-00016$", "flags": "i"}, "person": {"regex": "marguerite", "flags": "i"}},
+    "outcome": {"error": "already_checked_out"}},
+   {"name": "get_asset", "args": {"asset": {"regex": "^AP-00016$", "flags": "i"}}}]}]},
  "expected_outcome": {"db": [{"type": "unchanged"}]},
  "answer": {"includes": ["Aleida Renner"]},
  "oracle": {"calls": [{"name": "checkout_asset", "input": {"asset": "AP-00016", "person": "Marguerite Little", "due_on": "2026-11-19"}}],
