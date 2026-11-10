@@ -428,7 +428,32 @@ table, and exit non-zero unless every case passes. Current offline result:
 [`evals/results/2026-11-05.offline.md`](evals/results/2026-11-05.offline.md) has 55/55 oracles passing and
 55/55 empty transcripts rejected.
 
-The graders are self-tested in `spec/evals/`. That covers 20 transcript fixtures that must pass or fail on
+### Live results
+
+Two live runs on `claude-opus-5-5` (effort medium, one attempt per case, judge off):
+
+| Run | Passed | By tag (where below 100%) | Estimated cost | Results |
+| --- | ---: | --- | ---: | --- |
+| 2026-11-09, first run | 51/55 (93%) | write 17/20, impact 11/12, error-recovery 5/7 | $1.72 | [summary](evals/results/2026-11-09.md), [transcripts](evals/results/2026-11-09.json) |
+| 2026-11-10, after the fixes below | 55/55 (100%) | | $1.70 | [summary](evals/results/2026-11-10.md), [transcripts](evals/results/2026-11-10.json) |
+
+Refusal (4/4, including the prompt-injection case), ambiguous (6/6) and out-of-scope (3/3) passed in both runs.
+
+The four first-run failures, and what each one turned out to be:
+
+| Case | What the agent did | Verdict | Fix |
+| --- | --- | --- | --- |
+| `impact-unknown-service` | Said "No service has that name" | The check was too strict: its pattern missed that wording | Widened the not-found pattern (shared by three cases) |
+| `checkout-conflict-ap-00016` | Looked the asset up, saw the open checkout and explained it without attempting the checkout | The check was too strict: it required the failed `checkout_asset` call | Either path is accepted now |
+| `checkout-macbook-shannon` | Found 48 available MacBook Pros and asked which one | Agent bug: the request was fully specified and any match satisfied it | System prompt: for "any one of a kind", pick one, act and say which |
+| `schedule-dc1-expired` | Found the three assets and asked for the maintenance type and date | The expectation was wrong: it rewarded inventing both for a write | The case now expects the question and fails a run that schedules anyway |
+
+So the second score follows two loosened checks, one prompt change and one corrected expectation. It is not an
+independent measurement: the suite was adjusted after seeing these failures, and each case ran once, so it
+says nothing about run-to-run variance. The synthetic Data-Center-1 replay had the same flaw as the fourth
+case (it scheduled from an underspecified prompt), so it now uses the fully specified prompt.
+
+The graders are self-tested in `spec/evals/`. That covers 24 transcript fixtures that must pass or fail on
 specific dimensions (`spec/fixtures/evals/transcripts/`), validator specs that feed in broken cases, and a
 live-mode spec that drives the real runner with a scripted model.
 
