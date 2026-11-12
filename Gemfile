@@ -23,7 +23,7 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 
 # Claude API (official Anthropic Ruby SDK) for the agent loop
-gem "anthropic", "~> 2.5"
+gem "anthropic", "~> 2.6"
 # Validates tool inputs against the same JSON schemas sent to the model
 gem "json_schemer", "~> 2.5"
 # Official MCP Ruby SDK: exposes the same tools to Claude Code / Claude Desktop
