@@ -27,7 +27,7 @@ gem "anthropic", "~> 2.5"
 # Validates tool inputs against the same JSON schemas sent to the model
 gem "json_schemer", "~> 2.5"
 # Official MCP Ruby SDK: exposes the same tools to Claude Code / Claude Desktop
-gem "mcp", "~> 1.9"
+gem "mcp", "~> 1.10"
 
 # Deterministic synthetic seed data (lib/seed_data.rb). Needed in production too: the deployed demo is
 # seeded from it, and lib/ is eager-loaded there.
