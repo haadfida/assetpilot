@@ -1,0 +1,28 @@
+name: Demo check
+
+# Once a day, ask the live demo for one page of assets. This fails if the demo is broken, and the query
+# gives the free Supabase project some activity (it is paused after about a week without enough).
+# It does not keep the Render API warm: that service still sleeps between visits.
+on:
+  schedule:
+    - cron: "17 5 * * *" # 05:17 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: demo-check
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      API: https://assetpilot-api-ws3v.onrender.com
+    steps:
+      - name: Wake the API and read from the database
+        run: |
+          # A sleeping service has taken almost two minutes to answer, so allow for that and retry.
+          curl --fail --silent --show-error --max-time 180 --retry 2 --retry-delay 15 --retry-all-errors \
+            --output assets.json "$API/api/assets"
+          jq --exit-status '.data | length > 0' assets.json
